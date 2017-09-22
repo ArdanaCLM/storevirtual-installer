@@ -1,0 +1,6 @@
+export VSA_CONFIG_DIR=/home/vsa-installer/pyVins
+export VSA_PACKAGE_PATH=/home/vsa-installer
+export VSA_IMAGE_PATH=$VSA_PACKAGE_PATH/KVM-VSA-11.5.01.0079.img.gz
+export VSA_INSTALLER=$VSA_PACKAGE_PATH/StoreVirtual_VSA_for_HP_Helion_OpenStack_Installer-11.5.01.0079
+export VSA_NETWORK_CONFIG_FILE=/etc/vsa/vsa_network_config.json
+export VSA_CONFIG_FILE=$VSA_CONFIG_DIR/etc/vsa/vsa_config.json

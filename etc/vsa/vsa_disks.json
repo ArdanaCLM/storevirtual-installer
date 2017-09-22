@@ -1,0 +1,7 @@
+{
+    "vsa_disks":
+    {
+        "Tier 0" : ["/dev/sdb"],
+        "Tier 1" : ["/dev/sdc"]
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "virtual_bridge": {
+        "name": "vsa-bridge",
+        "ip_address": "172.16.0.27",
+        "interface": "eth1"
+    },
+    "vsa_network": {
+        "ip_address": "172.16.128.14"
+    }
+}

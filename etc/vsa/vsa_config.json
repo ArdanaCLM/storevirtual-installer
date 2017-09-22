@@ -1,0 +1,11 @@
+{
+    "vsa_config": {
+        "os_image_dir": "/mnt/state/vsa-kvm-storage",
+        "created_at": "",
+        "hostname": "vsa-hostname",
+        "os_image_storagepool": "vsa-storage-pool",
+        "updated_at": "",
+        "network_name": "vsa-network",
+        "file_access_count": 0
+    }
+}

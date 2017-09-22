@@ -1,0 +1,80 @@
+#!/usr/bin/python
+#
+# (c) Copyright 2015-2016 Hewlett Packard Enterprise Development LP
+# (c) Copyright 2017 SUSE LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+
+import argparse
+import logging
+import sys
+import libvirt
+import ConfigParser
+import os
+
+from storevirtual_installer.deployer import Deployer
+
+
+# Installer config file
+INSTALLER_CONFIG_FILE = "/etc/vsa/storevirtual-installer.conf"
+
+# Default log file
+DEFAULT_LOG_FILENAME = "/var/log/storevirtual-installer.log"
+DEFAULT_LOG_LEVEL = "INFO"
+
+config = ConfigParser.RawConfigParser()
+config.add_section('logging')
+config.set('logging', 'log_path', DEFAULT_LOG_FILENAME)
+config.set('logging', 'log_level', DEFAULT_LOG_LEVEL)
+
+# If config file exists, load the attributes
+if os.path.exists(INSTALLER_CONFIG_FILE):
+    config.read(INSTALLER_CONFIG_FILE)
+
+LOG_FILENAME = config.get('logging', 'log_path')
+LOG_LEVEL = config.get('logging', 'log_level')
+
+logging.basicConfig(filename=LOG_FILENAME, level=LOG_LEVEL,
+                    format='%(asctime)s %(levelname)s %(message)s',
+                    filemode='a')
+
+LOG = logging.getLogger()
+
+if __name__ == '__main__':
+    try:
+        connection = libvirt.open("qemu:///system")
+    except Exception as e:
+        LOG.error("Failed to connect to hypervisor")
+        sys.exit(1)
+    parser = argparse.ArgumentParser(
+        description="Installation of VSA")
+    parser.add_argument('-f', '--file', metavar='<FILE>',
+                        help='Use a custom file to add the drives for VSA.')
+    parser.add_argument('-d', '--destroy', metavar='<DESTROY>',
+                        help='Boolean value to destroy the configured VSA.')
+    parser.add_argument('-ao', '--AO', metavar='<AO>',
+                        help='Boolean value to enable AO.')
+    args = parser.parse_args()
+    disk_file = args.file if args.file else None
+
+    is_AO_capable = True if str(args.AO).lower() == "true" else False
+    destroy = True if str(args.destroy).lower() == "true" else False
+
+    deployer = Deployer(connection, is_AO_capable, disk_file)
+
+    if not destroy:
+        deployer.install_vsa()
+    else:
+        LOG.info("Calling VSA configuration destroy")
+        deployer.destroy_vsa()
